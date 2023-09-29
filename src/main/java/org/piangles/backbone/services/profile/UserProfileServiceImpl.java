@@ -14,9 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-
- 
 package org.piangles.backbone.services.profile;
 
 import org.piangles.backbone.services.Locator;
@@ -122,7 +119,7 @@ public final class UserProfileServiceImpl implements UserProfileService
 	}
 
 	@Override
-	boolean pendingEmailChangeExists(String newEmailId) throws UserProfileException
+	public boolean pendingEmailChangeExists(String newEmailId) throws UserProfileException
 	{
 		boolean pendingChangeExists = false;
 		try
@@ -139,4 +136,20 @@ public final class UserProfileServiceImpl implements UserProfileService
 
 		return pendingChangeExists;
 	}
+
+	@Override
+	public void savePendingEmailChange(PendingEmailChange pendingEmailChange) throws UserProfileException {
+		try
+		{
+			logger.info("Persisting pending email change");
+			pendingEmailChangeNoSQLDAO.persistPendingEmailChange(pendingEmailChange);
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed persisting pending email change";
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+	}
+
 }
