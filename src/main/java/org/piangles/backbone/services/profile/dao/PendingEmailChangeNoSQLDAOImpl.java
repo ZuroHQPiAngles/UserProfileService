@@ -34,7 +34,7 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
 
     private Bson createFilter(String newEmailId)
     {
-        return Filters.and(Filters.eq("emailId", newEmailId));
+        return Filters.and(Filters.eq("newEmail", newEmailId));
     }
 
     @Override
