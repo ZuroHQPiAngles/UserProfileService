@@ -4,10 +4,11 @@ import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import org.piangles.backbone.services.profile.PendingEmailChange;
 import org.piangles.core.dao.DAOException;
+import org.piangles.core.resources.ResourceException;
 
 public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO<PendingEmailChange> implements PendingEmailChangeNoSQLDAO {
 
-    public PendingEmailChangeNoSQLDAOImpl() throws Exception {
+    public PendingEmailChangeNoSQLDAOImpl() throws ResourceException {
         super();
     }
 
