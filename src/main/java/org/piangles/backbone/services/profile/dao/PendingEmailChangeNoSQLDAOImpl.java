@@ -2,13 +2,12 @@ package org.piangles.backbone.services.profile.dao;
 
 import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
-import org.piangles.backbone.services.logging.LoggingService;
 import org.piangles.backbone.services.profile.PendingEmailChange;
 import org.piangles.core.dao.DAOException;
 
 public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO<PendingEmailChange> implements PendingEmailChangeNoSQLDAO {
 
-    public PendingEmailChangeNoSQLDAOImpl(LoggingService loggingService) throws Exception {
+    public PendingEmailChangeNoSQLDAOImpl() throws Exception {
         super();
     }
 

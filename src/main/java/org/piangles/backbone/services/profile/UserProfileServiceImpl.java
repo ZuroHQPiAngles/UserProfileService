@@ -38,7 +38,7 @@ public final class UserProfileServiceImpl implements UserProfileService
 	public UserProfileServiceImpl() throws Exception
 	{
 		userProfileDAO = new UserProfileDAOImpl();
-		pendingEmailChangeNoSQLDAO = new PendingEmailChangeNoSQLDAOImpl(logger);
+		pendingEmailChangeNoSQLDAO = new PendingEmailChangeNoSQLDAOImpl();
 	}
 	
 	@Override
