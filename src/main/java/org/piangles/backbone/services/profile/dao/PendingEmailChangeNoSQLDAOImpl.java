@@ -1,14 +1,12 @@
 package org.piangles.backbone.services.profile.dao;
 
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.piangles.backbone.services.logging.LoggingService;
 import org.piangles.core.dao.DAOException;
-import org.piangles.core.resources.MongoDataStore;
 
 public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO<PendingEmailChange> implements PendingEmailChangeNoSQLDAO {
 
