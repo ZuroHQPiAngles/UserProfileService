@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
- 
+
  
 package org.piangles.backbone.services.profile;
 
@@ -24,6 +24,8 @@ import org.piangles.backbone.services.id.IdException;
 import org.piangles.backbone.services.id.IdService;
 import org.piangles.backbone.services.id.Identifier;
 import org.piangles.backbone.services.logging.LoggingService;
+import org.piangles.backbone.services.profile.dao.PendingEmailChangeNoSQLDAO;
+import org.piangles.backbone.services.profile.dao.PendingEmailChangeNoSQLDAOImpl;
 import org.piangles.backbone.services.profile.dao.UserProfileDAO;
 import org.piangles.backbone.services.profile.dao.UserProfileDAOImpl;
 import org.piangles.core.dao.DAOException;
@@ -33,11 +35,13 @@ public final class UserProfileServiceImpl implements UserProfileService
 	private static final String USER_ID_TYPE = "UserId";	
 	private LoggingService logger = Locator.getInstance().getLoggingService();
 	private IdService idService	 = Locator.getInstance().getIdService();
-	private UserProfileDAO userProfileDAO = null; 
+	private UserProfileDAO userProfileDAO = null;
+	private PendingEmailChangeNoSQLDAO pendingEmailChangeNoSQLDAO = null;
 
 	public UserProfileServiceImpl() throws Exception
 	{
 		userProfileDAO = new UserProfileDAOImpl();
+		pendingEmailChangeNoSQLDAO = new PendingEmailChangeNoSQLDAOImpl(logger);
 	}
 	
 	@Override
@@ -115,5 +119,24 @@ public final class UserProfileServiceImpl implements UserProfileService
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}
+	}
+
+	@Override
+	boolean pendingEmailChangeExists(String newEmailId) throws UserProfileException
+	{
+		boolean pendingChangeExists = false;
+		try
+		{
+			logger.info("Checking if pending email change exists for: " + newEmailId);
+			pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExists(newEmailId);
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed to check if pending change exists for: " + newEmailId;
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+
+		return pendingChangeExists;
 	}
 }
