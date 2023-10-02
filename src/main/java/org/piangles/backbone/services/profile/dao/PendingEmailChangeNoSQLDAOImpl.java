@@ -15,7 +15,8 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
     @Override
     public void persistPendingEmailChange(PendingEmailChange pendingEmailChange) throws DAOException
     {
-        super.upsert(null, pendingEmailChange);
+        super.upsert(createFilterUserId(pendingEmailChange.getUserId()), pendingEmailChange);
+        //TODO
     }
 
     @Override
@@ -35,6 +36,11 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
     private Bson createFilter(String newEmailId)
     {
         return Filters.and(Filters.eq("newEmail", newEmailId));
+    }
+
+    private Bson createFilterUserId(String userId)
+    {
+        return Filters.and(Filters.eq("userId", userId));
     }
 
     @Override
