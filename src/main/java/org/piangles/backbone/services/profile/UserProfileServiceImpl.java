@@ -14,9 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
- 
- 
 package org.piangles.backbone.services.profile;
 
 import org.piangles.backbone.services.Locator;
@@ -24,6 +21,8 @@ import org.piangles.backbone.services.id.IdException;
 import org.piangles.backbone.services.id.IdService;
 import org.piangles.backbone.services.id.Identifier;
 import org.piangles.backbone.services.logging.LoggingService;
+import org.piangles.backbone.services.profile.dao.PendingEmailChangeNoSQLDAO;
+import org.piangles.backbone.services.profile.dao.PendingEmailChangeNoSQLDAOImpl;
 import org.piangles.backbone.services.profile.dao.UserProfileDAO;
 import org.piangles.backbone.services.profile.dao.UserProfileDAOImpl;
 import org.piangles.core.dao.DAOException;
@@ -31,13 +30,15 @@ import org.piangles.core.dao.DAOException;
 public final class UserProfileServiceImpl implements UserProfileService
 {
 	private static final String USER_ID_TYPE = "UserId";	
-	private LoggingService logger = Locator.getInstance().getLoggingService();
-	private IdService idService	 = Locator.getInstance().getIdService();
-	private UserProfileDAO userProfileDAO = null; 
+	private final LoggingService logger = Locator.getInstance().getLoggingService();
+	private final IdService idService	 = Locator.getInstance().getIdService();
+	private UserProfileDAO userProfileDAO = null;
+	private PendingEmailChangeNoSQLDAO pendingEmailChangeNoSQLDAO = null;
 
 	public UserProfileServiceImpl() throws Exception
 	{
 		userProfileDAO = new UserProfileDAOImpl();
+		pendingEmailChangeNoSQLDAO = new PendingEmailChangeNoSQLDAOImpl();
 	}
 	
 	@Override
@@ -88,12 +89,12 @@ public final class UserProfileServiceImpl implements UserProfileService
 		BasicUserProfile profile = null;
 		try
 		{
-			logger.info("Retriving UserProfile for: " + userId);
+			logger.info("Retrieving UserProfile for: " + userId);
 			profile = userProfileDAO.retrieveUserProfile(userId);
 		}
 		catch (DAOException e)
 		{
-			String message = "Failed retriving UserProfile for UserId: " + userId;
+			String message = "Failed retrieving UserProfile for UserId: " + userId;
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}
@@ -116,4 +117,45 @@ public final class UserProfileServiceImpl implements UserProfileService
 			throw new UserProfileException(message);
 		}
 	}
+
+	@Override
+	public boolean pendingEmailChangeExists(String userId, String newEmailId) throws UserProfileException
+	{
+		boolean pendingChangeExists = false;
+		try
+		{
+			logger.info("Checking if pending email change exists for: " + newEmailId);
+			if(newEmailId != null)
+			{
+				pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExists(newEmailId);
+			}
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed to check if pending change exists for: " + newEmailId;
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+
+		return pendingChangeExists;
+	}
+
+	@Override
+	public void savePendingEmailChange(PendingEmailChange pendingEmailChange) throws UserProfileException {
+		try
+		{
+			if (pendingEmailChange != null)
+			{
+				logger.info("Persisting pending email change");
+				pendingEmailChangeNoSQLDAO.persistPendingEmailChange(pendingEmailChange);
+			}
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed persisting pending email change";
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+	}
+
 }
