@@ -109,6 +109,14 @@ public final class UserProfileServiceImpl implements UserProfileService
 		{
 			logger.info("Updating UserProfile for: " + userId);
 			userProfileDAO.updateUserProfile(userId, profile);
+			//test
+			boolean exists = pendingEmailChangeExists("abc.com");
+			logger.info("Exists: " + exists);
+			PendingEmailChange pendingEmailChange = new PendingEmailChange(userId,"a.com", "b.com", EmailChangeStatus.Pending);
+			savePendingEmailChange(pendingEmailChange);
+			//test
+
+
 		}
 		catch (DAOException e)
 		{
