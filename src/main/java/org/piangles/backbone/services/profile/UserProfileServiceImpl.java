@@ -30,8 +30,8 @@ import org.piangles.core.dao.DAOException;
 public final class UserProfileServiceImpl implements UserProfileService
 {
 	private static final String USER_ID_TYPE = "UserId";	
-	private LoggingService logger = Locator.getInstance().getLoggingService();
-	private IdService idService	 = Locator.getInstance().getIdService();
+	private final LoggingService logger = Locator.getInstance().getLoggingService();
+	private final IdService idService	 = Locator.getInstance().getIdService();
 	private UserProfileDAO userProfileDAO = null;
 	private PendingEmailChangeNoSQLDAO pendingEmailChangeNoSQLDAO = null;
 
@@ -89,12 +89,12 @@ public final class UserProfileServiceImpl implements UserProfileService
 		BasicUserProfile profile = null;
 		try
 		{
-			logger.info("Retriving UserProfile for: " + userId);
+			logger.info("Retrieving UserProfile for: " + userId);
 			profile = userProfileDAO.retrieveUserProfile(userId);
 		}
 		catch (DAOException e)
 		{
-			String message = "Failed retriving UserProfile for UserId: " + userId;
+			String message = "Failed retrieving UserProfile for UserId: " + userId;
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}
@@ -110,9 +110,9 @@ public final class UserProfileServiceImpl implements UserProfileService
 			logger.info("Updating UserProfile for: " + userId);
 			userProfileDAO.updateUserProfile(userId, profile);
 			//test
-			boolean exists = pendingEmailChangeExists("b.com");
+			boolean exists = pendingEmailChangeExists(null,"b.com");
 			logger.info("Exists: " + exists);
-			PendingEmailChange pendingEmailChange = new PendingEmailChange(userId,"a.com", "b.com", EmailChangeStatus.Pending);
+			PendingEmailChange pendingEmailChange = new PendingEmailChange(userId,"a.com", "c.com", EmailChangeStatus.Pending);
 			savePendingEmailChange(pendingEmailChange);
 			//test
 
@@ -133,13 +133,9 @@ public final class UserProfileServiceImpl implements UserProfileService
 		try
 		{
 			logger.info("Checking if pending email change exists for: " + newEmailId);
-			if(userId != null)
+			if(newEmailId != null)
 			{
-				pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExistsForUser(userId);
-			}
-			if(!pendingChangeExists && newEmailId != null)
-			{
-				pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExistsForEmail(newEmailId);
+				pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExists(newEmailId);
 			}
 		}
 		catch (DAOException e)
@@ -156,15 +152,10 @@ public final class UserProfileServiceImpl implements UserProfileService
 	public void savePendingEmailChange(PendingEmailChange pendingEmailChange) throws UserProfileException {
 		try
 		{
-			logger.info("Checking if pending email change exists for user: " + pendingEmailChange.getUserId());
-			if(!pendingEmailChangeExists(pendingEmailChange.getUserId(),null))
+			if (pendingEmailChange != null)
 			{
 				logger.info("Persisting pending email change");
 				pendingEmailChangeNoSQLDAO.persistPendingEmailChange(pendingEmailChange);
-			}
-			else
-			{
-				throw new UserProfileException("Pending email change already exists for this user");
 			}
 		}
 		catch (DAOException e)
