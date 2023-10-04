@@ -127,13 +127,20 @@ public final class UserProfileServiceImpl implements UserProfileService
 	}
 
 	@Override
-	public boolean pendingEmailChangeExists(String newEmailId) throws UserProfileException
+	public boolean pendingEmailChangeExists(String userId, String newEmailId) throws UserProfileException
 	{
 		boolean pendingChangeExists = false;
 		try
 		{
 			logger.info("Checking if pending email change exists for: " + newEmailId);
-			pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExists(newEmailId);
+			if(userId != null)
+			{
+				pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExistsForUser(userId);
+			}
+			if(!pendingChangeExists && newEmailId != null)
+			{
+				pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExistsForEmail(newEmailId);
+			}
 		}
 		catch (DAOException e)
 		{
@@ -149,8 +156,16 @@ public final class UserProfileServiceImpl implements UserProfileService
 	public void savePendingEmailChange(PendingEmailChange pendingEmailChange) throws UserProfileException {
 		try
 		{
-			logger.info("Persisting pending email change");
-			pendingEmailChangeNoSQLDAO.persistPendingEmailChange(pendingEmailChange);
+			logger.info("Checking if pending email change exists for user: " + pendingEmailChange.getUserId());
+			if(!pendingEmailChangeExists(pendingEmailChange.getUserId(),null))
+			{
+				logger.info("Persisting pending email change");
+				pendingEmailChangeNoSQLDAO.persistPendingEmailChange(pendingEmailChange);
+			}
+			else
+			{
+				throw new UserProfileException("Pending email change already exists for this user");
+			}
 		}
 		catch (DAOException e)
 		{
