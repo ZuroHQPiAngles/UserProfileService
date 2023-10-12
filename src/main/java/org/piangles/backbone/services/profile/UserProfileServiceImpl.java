@@ -158,4 +158,22 @@ public final class UserProfileServiceImpl implements UserProfileService
 		}
 	}
 
+	@Override
+	public void revertPendingEmailChange(PendingEmailChange pendingEmailChange) throws UserProfileException {
+		try
+		{
+			if (pendingEmailChange != null)
+			{
+				logger.info("Deleting pending email change for userId: " + pendingEmailChange.getUserId());
+				pendingEmailChangeNoSQLDAO.deletePendingEmailChange(pendingEmailChange);
+			}
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed reverting pending email change for userId: " + pendingEmailChange.getUserId();
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+	}
+
 }

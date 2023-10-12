@@ -8,7 +8,8 @@ import org.piangles.core.resources.ResourceException;
 
 public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO<PendingEmailChange> implements PendingEmailChangeNoSQLDAO {
 
-    public PendingEmailChangeNoSQLDAOImpl() throws ResourceException {
+    public PendingEmailChangeNoSQLDAOImpl() throws ResourceException
+    {
         super();
     }
 
@@ -31,6 +32,12 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
         }
 
         return pendingChangeExists;
+    }
+
+    @Override
+    public void deletePendingEmailChange(PendingEmailChange pendingEmailChange) throws DAOException
+    {
+        super.delete(createFilterUserId(pendingEmailChange.getUserId()));
     }
 
     private Bson createFilter(String newEmailId)
