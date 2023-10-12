@@ -109,6 +109,11 @@ public final class UserProfileServiceImpl implements UserProfileService
 		{
 			logger.info("Updating UserProfile for: " + userId);
 			userProfileDAO.updateUserProfile(userId, profile);
+			//test code
+			PendingEmailChange pendingEmailChange = new PendingEmailChange("73b1ace", null, null,
+					null, null);
+			revertPendingEmailChange(pendingEmailChange);
+			//test code
 		}
 		catch (DAOException e)
 		{
@@ -148,11 +153,33 @@ public final class UserProfileServiceImpl implements UserProfileService
 			{
 				logger.info("Persisting pending email change");
 				pendingEmailChangeNoSQLDAO.persistPendingEmailChange(pendingEmailChange);
+				logger.info("Successfully persisted pending email change");
+
 			}
 		}
 		catch (DAOException e)
 		{
 			String message = "Failed persisting pending email change";
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+	}
+
+	@Override
+	public void revertPendingEmailChange(PendingEmailChange pendingEmailChange) throws UserProfileException {
+		try
+		{
+			if (pendingEmailChange != null)
+			{
+				logger.info("Deleting pending email change for userId: " + pendingEmailChange.getUserId());
+				pendingEmailChangeNoSQLDAO.deletePendingEmailChange(pendingEmailChange);
+				logger.info("Successfully deleted pending email change for userId: " + pendingEmailChange.getUserId());
+
+			}
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed reverting pending email change for userId: " + pendingEmailChange.getUserId();
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}
