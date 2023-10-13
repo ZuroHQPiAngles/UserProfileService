@@ -40,15 +40,27 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
         super.delete(createFilterUserId(pendingEmailChange.getUserId()));
     }
 
-    private Bson createFilter(String newEmailId)
+	@Override
+	public PendingEmailChange getPendingEmailChange(String userId, String emailId) throws DAOException 
+	{
+		//it is guaranteed to have only one record as we always upsert in save function
+		return super.readOne(createFilterUserIdEmail(userId, emailId));
+	}
+
+	private Bson createFilter(String newEmailId)
     {
-        return Filters.and(Filters.eq("newEmail", newEmailId));
+        return Filters.eq("newEmail", newEmailId);
     }
 
     private Bson createFilterUserId(String userId)
     {
-        return Filters.and(Filters.eq("userId", userId));
+        return Filters.eq("userId", userId);
     }
+
+	private Bson createFilterUserIdEmail(String userId, String newEmailId)
+	{
+		return Filters.and(Filters.eq("userId", userId), Filters.eq("newEmail", newEmailId));
+	}
 
     @Override
     protected Class<PendingEmailChange> getTClass()

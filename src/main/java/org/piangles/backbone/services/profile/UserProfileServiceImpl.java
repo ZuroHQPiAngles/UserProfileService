@@ -118,6 +118,10 @@ public final class UserProfileServiceImpl implements UserProfileService
 		}
 	}
 
+	/**
+	 * This method checks if the email has been used already by another user in pending email change request
+	 * This method cannot be used to check if a given user has the email in question in the pending request
+	 */
 	@Override
 	public boolean pendingEmailChangeExists(String userId, String newEmailId) throws UserProfileException
 	{
@@ -139,7 +143,7 @@ public final class UserProfileServiceImpl implements UserProfileService
 
 		return pendingChangeExists;
 	}
-
+	
 	@Override
 	public void savePendingEmailChange(PendingEmailChange pendingEmailChange) throws UserProfileException {
 		try
@@ -178,6 +182,31 @@ public final class UserProfileServiceImpl implements UserProfileService
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}
+	}
+
+	/**
+	 * This method checks if a given user has the email in question in the pending request
+	 */
+	@Override
+	public PendingEmailChange getPendingEmailChange(String userId, String newEMailId) throws UserProfileException 
+	{
+		PendingEmailChange pendingEmailChange = null;
+		try
+		{
+			logger.info("Checking if pending email change exists with emailId: " + newEMailId + " for userId: " + userId);
+			if(newEMailId != null)
+			{
+				pendingEmailChange = pendingEmailChangeNoSQLDAO.getPendingEmailChange(userId, newEMailId);
+			}
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed to get pending change for: " + newEMailId + " for userId: " + userId;
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+
+		return pendingEmailChange;
 	}
 
 }
