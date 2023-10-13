@@ -109,11 +109,6 @@ public final class UserProfileServiceImpl implements UserProfileService
 		{
 			logger.info("Updating UserProfile for: " + userId);
 			userProfileDAO.updateUserProfile(userId, profile);
-			//test code
-			PendingEmailChange pendingEmailChange = new PendingEmailChange("73b1ace", null, null,
-					null, null);
-			revertPendingEmailChange(pendingEmailChange);
-			//test code
 		}
 		catch (DAOException e)
 		{
