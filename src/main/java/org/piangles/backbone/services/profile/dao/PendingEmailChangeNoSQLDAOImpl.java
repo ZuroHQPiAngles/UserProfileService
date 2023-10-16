@@ -49,7 +49,7 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
 
 	private Bson createFilter(String newEmailId)
     {
-        return Filters.eq("newEmail", newEmailId);
+        return Filters.and(Filters.eq("newEmail", newEmailId),  Filters.eq("emailChangeStatus", "Pending"));
     }
 
     private Bson createFilterUserId(String userId)
@@ -59,7 +59,7 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
 
 	private Bson createFilterUserIdEmail(String userId, String newEmailId)
 	{
-		return Filters.and(Filters.eq("userId", userId), Filters.eq("newEmail", newEmailId));
+		return Filters.and(Filters.eq("userId", userId), Filters.eq("newEmail", newEmailId), Filters.eq("emailChangeStatus", "Pending"));
 	}
 
     @Override
