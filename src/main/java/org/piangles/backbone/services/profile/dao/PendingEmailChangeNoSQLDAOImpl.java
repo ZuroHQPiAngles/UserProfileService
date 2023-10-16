@@ -47,9 +47,17 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
 		return super.readOne(createFilterUserIdEmail(userId, emailId));
 	}
 
+	@Override
+	public PendingEmailChange getVerifiedNewEmail(String oldEmail)  throws DAOException
+	{
+		return super.readOne(createOldEmailVerifiedFilter(oldEmail));
+	}
+
 	private Bson createFilter(String newEmailId)
     {
-        return Filters.and(Filters.eq("newEmail", newEmailId),  Filters.eq("emailChangeStatus", "Pending"));
+        return Filters.and(
+				Filters.eq("newEmail", newEmailId),  
+				Filters.eq("emailChangeStatus", "Pending"));
     }
 
     private Bson createFilterUserId(String userId)
@@ -59,7 +67,17 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
 
 	private Bson createFilterUserIdEmail(String userId, String newEmailId)
 	{
-		return Filters.and(Filters.eq("userId", userId), Filters.eq("newEmail", newEmailId), Filters.eq("emailChangeStatus", "Pending"));
+		return Filters.and(
+				Filters.eq("userId", userId), 
+				Filters.eq("newEmail", newEmailId), 
+				Filters.eq("emailChangeStatus", "Pending"));
+	}
+
+	private Bson createOldEmailVerifiedFilter(String oldEmail)
+	{
+		return Filters.and(
+				Filters.eq("oldEmail", oldEmail),
+				Filters.eq("emailChangeStatus", "Verified"));
 	}
 
     @Override
