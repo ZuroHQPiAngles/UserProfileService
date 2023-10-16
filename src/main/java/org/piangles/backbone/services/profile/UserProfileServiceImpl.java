@@ -26,6 +26,7 @@ import org.piangles.backbone.services.profile.dao.PendingEmailChangeNoSQLDAOImpl
 import org.piangles.backbone.services.profile.dao.UserProfileDAO;
 import org.piangles.backbone.services.profile.dao.UserProfileDAOImpl;
 import org.piangles.core.dao.DAOException;
+import software.amazon.awssdk.utils.StringUtils;
 
 public final class UserProfileServiceImpl implements UserProfileService
 {
@@ -202,6 +203,28 @@ public final class UserProfileServiceImpl implements UserProfileService
 		catch (DAOException e)
 		{
 			String message = "Failed to get pending change for: " + newEMailId + " for userId: " + userId;
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+
+		return pendingEmailChange;
+	}
+
+	/**
+	 * For a given old email, the system checks if a verified new email exists and returns the new email
+	 */
+	@Override
+	public PendingEmailChange getVerifiedNewEmail(String oldEmail) throws UserProfileException 
+	{
+		PendingEmailChange pendingEmailChange = null;
+		try
+		{
+			logger.info("Getting verified email change exists with old emailId: " + oldEmail);
+			pendingEmailChange = pendingEmailChangeNoSQLDAO.getVerifiedNewEmail(oldEmail);
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed to getVerifiedNewEmail with old emailId: " + oldEmail;
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}
