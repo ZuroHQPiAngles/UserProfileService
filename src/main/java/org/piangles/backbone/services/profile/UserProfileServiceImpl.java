@@ -188,20 +188,42 @@ public final class UserProfileServiceImpl implements UserProfileService
 	 * This method checks if a given user has the email in question in the pending request
 	 */
 	@Override
-	public PendingEmailChange getPendingEmailChange(String userId, String newEMailId) throws UserProfileException 
+	public PendingEmailChange getPendingEmailChange(String userId) throws UserProfileException
 	{
 		PendingEmailChange pendingEmailChange = null;
 		try
 		{
-			logger.info("Checking if pending email change exists with emailId: " + newEMailId + " for userId: " + userId);
-			if(newEMailId != null)
+			logger.info("Getting pending email change for userId: " + userId);
+			if(userId != null)
 			{
-				pendingEmailChange = pendingEmailChangeNoSQLDAO.getPendingEmailChange(userId, newEMailId);
+				pendingEmailChange = pendingEmailChangeNoSQLDAO.getPendingEmailChange(userId);
 			}
 		}
 		catch (DAOException e)
 		{
-			String message = "Failed to get pending change for: " + newEMailId + " for userId: " + userId;
+			String message = "Failed to get pending email change for userId: " + userId;
+			logger.error(message + ". Reason: " + e.getMessage(), e);
+			throw new UserProfileException(message);
+		}
+
+		return pendingEmailChange;
+	}
+
+	/**
+	 * For a given old email, the system checks if a verified new email exists and returns the new email
+	 */
+	@Override
+	public PendingEmailChange getVerifiedNewEmail(String oldEmail) throws UserProfileException 
+	{
+		PendingEmailChange pendingEmailChange = null;
+		try
+		{
+			logger.info("Getting verified email change exists with old emailId: " + oldEmail);
+			pendingEmailChange = pendingEmailChangeNoSQLDAO.getVerifiedNewEmail(oldEmail);
+		}
+		catch (DAOException e)
+		{
+			String message = "Failed to getVerifiedNewEmail with old emailId: " + oldEmail;
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}
