@@ -26,7 +26,6 @@ import org.piangles.backbone.services.profile.dao.PendingEmailChangeNoSQLDAOImpl
 import org.piangles.backbone.services.profile.dao.UserProfileDAO;
 import org.piangles.backbone.services.profile.dao.UserProfileDAOImpl;
 import org.piangles.core.dao.DAOException;
-import software.amazon.awssdk.utils.StringUtils;
 
 public final class UserProfileServiceImpl implements UserProfileService
 {
@@ -189,20 +188,20 @@ public final class UserProfileServiceImpl implements UserProfileService
 	 * This method checks if a given user has the email in question in the pending request
 	 */
 	@Override
-	public PendingEmailChange getPendingEmailChange(String userId, String newEMailId) throws UserProfileException 
+	public PendingEmailChange getPendingEmailChange(String userId) throws UserProfileException
 	{
 		PendingEmailChange pendingEmailChange = null;
 		try
 		{
-			logger.info("Checking if pending email change exists with emailId: " + newEMailId + " for userId: " + userId);
-			if(newEMailId != null)
+			logger.info("Getting pending email change for userId: " + userId);
+			if(userId != null)
 			{
-				pendingEmailChange = pendingEmailChangeNoSQLDAO.getPendingEmailChange(userId, newEMailId);
+				pendingEmailChange = pendingEmailChangeNoSQLDAO.getPendingEmailChange(userId);
 			}
 		}
 		catch (DAOException e)
 		{
-			String message = "Failed to get pending change for: " + newEMailId + " for userId: " + userId;
+			String message = "Failed to get pending email change for userId: " + userId;
 			logger.error(message + ". Reason: " + e.getMessage(), e);
 			throw new UserProfileException(message);
 		}

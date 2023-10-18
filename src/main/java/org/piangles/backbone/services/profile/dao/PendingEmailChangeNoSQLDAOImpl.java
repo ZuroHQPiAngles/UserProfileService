@@ -41,10 +41,10 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
     }
 
 	@Override
-	public PendingEmailChange getPendingEmailChange(String userId, String emailId) throws DAOException 
+	public PendingEmailChange getPendingEmailChange(String userId) throws DAOException
 	{
 		//it is guaranteed to have only one record as we always upsert in save function
-		return super.readOne(createFilterUserIdEmail(userId, emailId));
+		return super.readOne(createFilterUserIdStatus(userId));
 	}
 
 	@Override
@@ -65,11 +65,10 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
         return Filters.eq("userId", userId);
     }
 
-	private Bson createFilterUserIdEmail(String userId, String newEmailId)
+	private Bson createFilterUserIdStatus(String userId)
 	{
 		return Filters.and(
 				Filters.eq("userId", userId), 
-				Filters.eq("newEmail", newEmailId), 
 				Filters.eq("emailChangeStatus", "Pending"));
 	}
 
