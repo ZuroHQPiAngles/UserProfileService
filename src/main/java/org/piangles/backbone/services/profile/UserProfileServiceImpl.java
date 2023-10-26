@@ -123,15 +123,16 @@ public final class UserProfileServiceImpl implements UserProfileService
 	 * This method cannot be used to check if a given user has the email in question in the pending request
 	 */
 	@Override
-	public boolean pendingEmailChangeExists(String userId, String newEmailId) throws UserProfileException
+	public PendingEmailChange pendingEmailChangeExists(String newEmailId) throws UserProfileException
 	{
-		boolean pendingChangeExists = false;
+		PendingEmailChange pendingEmailChange = null;
+
 		try
 		{
 			logger.info("Checking if pending email change exists for: " + newEmailId);
 			if(newEmailId != null)
 			{
-				pendingChangeExists = pendingEmailChangeNoSQLDAO.pendingEmailChangeExists(newEmailId);
+				pendingEmailChange = pendingEmailChangeNoSQLDAO.pendingEmailChangeExists(newEmailId);
 			}
 		}
 		catch (DAOException e)
@@ -141,7 +142,7 @@ public final class UserProfileServiceImpl implements UserProfileService
 			throw new UserProfileException(message);
 		}
 
-		return pendingChangeExists;
+		return pendingEmailChange;
 	}
 	
 	@Override

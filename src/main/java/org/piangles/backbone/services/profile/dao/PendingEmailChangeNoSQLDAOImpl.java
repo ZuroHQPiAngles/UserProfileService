@@ -20,18 +20,9 @@ public class PendingEmailChangeNoSQLDAOImpl extends  AbstractUserProfileNoSqlDAO
     }
 
     @Override
-    public boolean pendingEmailChangeExists(String emailId) throws DAOException
+    public PendingEmailChange pendingEmailChangeExists(String emailId) throws DAOException
     {
-        boolean pendingChangeExists = false;
-
-        PendingEmailChange pendingEmailChange = super.readOne(createFilter(emailId));
-
-        if(pendingEmailChange != null)
-        {
-            pendingChangeExists = true;
-        }
-
-        return pendingChangeExists;
+        return super.readOne(createFilter(emailId));
     }
 
     @Override
