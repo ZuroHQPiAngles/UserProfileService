@@ -9,5 +9,5 @@ public interface PendingEmailChangeNoSQLDAO {
     public PendingEmailChange pendingEmailChangeExists(String emailId) throws DAOException;
     public void deletePendingEmailChange(PendingEmailChange pendingEmailChange) throws DAOException;
 	public PendingEmailChange getPendingEmailChange(String userId) throws DAOException;
-	public PendingEmailChange getVerifiedNewEmail(String oldEmail) throws DAOException;
+	public PendingEmailChange getVerifiedNewEmail(String oldEmail, String invoiceID) throws DAOException;
 }
