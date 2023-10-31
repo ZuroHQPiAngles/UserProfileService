@@ -214,13 +214,13 @@ public final class UserProfileServiceImpl implements UserProfileService
 	 * For a given old email, the system checks if a verified new email exists and returns the new email
 	 */
 	@Override
-	public PendingEmailChange getVerifiedNewEmail(String oldEmail) throws UserProfileException 
+	public PendingEmailChange getVerifiedNewEmail(String oldEmail, String invoiceId) throws UserProfileException
 	{
 		PendingEmailChange pendingEmailChange = null;
 		try
 		{
 			logger.info("Getting verified email change exists with old emailId: " + oldEmail);
-			pendingEmailChange = pendingEmailChangeNoSQLDAO.getVerifiedNewEmail(oldEmail);
+			pendingEmailChange = pendingEmailChangeNoSQLDAO.getVerifiedNewEmail(oldEmail, invoiceId);
 		}
 		catch (DAOException e)
 		{
